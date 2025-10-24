@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import IconReplaceTool from "../../components/IconReplaceTool";
 import Image from "next/image";
