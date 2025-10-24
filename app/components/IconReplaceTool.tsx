@@ -1,17 +1,21 @@
-"use client";
+// @ts-nocheck
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { AlertCircle, CheckSquare, FolderOpen, RefreshCcw, Replace, Save, Upload, X, Info, Square, Wand2 } from "lucide-react";
+
+/**
+ * Icon Replace Tool — Similares v31.2
+ *
+ * v31.2 = Igual à v31 (similaridade por hash + nomes), MAS com o bloco 3)
+ * "(Opcional) pasta destino" integrado **exatamente** com o layout do mock:
+ * - Cabeçalho em 3 colunas ("3) (Opcional) Selecionar" | "pasta destino" | texto)
+ * - Botão escuro com ícone de pasta + label "Selecionar pasta destino"
+ * - Nome da pasta à direita (ex.: NovosIcones)
+ * - Linha separadora fina
+ *
+ * Mantém fallback para download quando FSA não está disponível.
+ */
 
 // ===== Utils =====
-async function loadImageFromFile(file) {
+async function loadImageFromFile(file: File): Promise<{ img: HTMLImageElement }> {
   return new Promise((resolve, reject) => {
     try {
       if (!file || file.size === 0) return reject(new Error("Ficheiro vazio ou inválido."));
@@ -75,7 +79,7 @@ function prepareForHash(canvas){ return edgeCanvasFromCanvas(canvas); }
 function extFromName(name){ const i=name.lastIndexOf('.'); return i>=0?name.slice(i+1).toLowerCase():''; }
 function baseName(name){ const dot=name.lastIndexOf('.'); let b=dot>=0?name.slice(0,dot):name; return b.toLowerCase().replace(/[-_](copy|final|novo|new)$/,'').replace(/[@_-]?\d+x$/,'').replace(/[-_]?\d+$/,'').replace(/-(filled|outline|solid|regular)$/,'').replace(/\s+/g,''); }
 async function canvasFromAnyImageFile(file){ if(!file||file.size===0) throw new Error('Ficheiro vazio ou corrompido.'); try{ if(window.createImageBitmap){ const bmp=await createImageBitmap(file); const c=document.createElement('canvas'); c.width=bmp.width; c.height=bmp.height; c.getContext('2d').drawImage(bmp,0,0); bmp.close(); return drawToCanvas(c,2048);} }catch(e){ /* fallback Image()*/ } const {img}=await loadImageFromFile(file); return drawToCanvas(img,2048); }
-async function blobFromCanvasAsFormat(canvas, mime='image/png', quality=0.92){ return new Promise(r=>canvas.toBlob(b=>r(b), mime, quality)); }
+async function blobFromCanvasAsFormat(canvas: HTMLCanvasElement, mime: string = 'image/png', quality: number = 0.92){ return new Promise(r=>canvas.toBlob(b=>r(b), mime, quality)); }
 
 // ===== Aliases (nome normalizado) =====
 const ALIAS_GROUPS = [
